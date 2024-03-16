@@ -14,7 +14,7 @@ export default function (theme: Theme = {}) {
       paddingLeft: 10,
       paddingRight: 10,
       marginTop: 6,
-      alignItems: 'center',
+      alignItems: 'center'
     },
     partialHeader: {
       paddingHorizontal: 15
@@ -25,9 +25,8 @@ export default function (theme: Theme = {}) {
     monthText: {
       fontSize: appStyle.textMonthFontSize,
       fontFamily: appStyle.textMonthFontFamily,
-      fontWeight: appStyle.textMonthFontWeight,
-      color: appStyle.monthTextColor,
-      margin: 10
+      fontWeight: '600',
+      color: '#2E2E2E'
     },
     arrow: {
       padding: 10,
@@ -50,7 +49,7 @@ export default function (theme: Theme = {}) {
     week: {
       marginTop: 7,
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'space-around'
     },
     partialWeek: {
       paddingRight: 0
@@ -68,7 +67,6 @@ export default function (theme: Theme = {}) {
     disabledDayHeader: {
       color: appStyle.textSectionTitleDisabledColor
     },
-    // @ts-expect-error
     ...(theme['stylesheet.calendar.header'] || {})
   });
 }

@@ -1,7 +1,7 @@
 import includes from 'lodash/includes';
 import XDate from 'xdate';
 
-import React, {Fragment, ReactNode, useCallback, useMemo, forwardRef, useImperativeHandle, useRef} from 'react';
+import React, {ReactNode, useCallback, useMemo, forwardRef, useImperativeHandle, useRef} from 'react';
 import {
   ActivityIndicator,
   Platform,
@@ -49,7 +49,7 @@ export interface CalendarHeaderProps {
   disableArrowLeft?: boolean;
   /** Disable right arrow */
   disableArrowRight?: boolean;
-  /** Apply custom disable color to selected day indexes */
+  /** Apply custom disable color to selected day names indexes */
   disabledDaysIndexes?: number[];
   /** Replace default title with custom one. the function receive a date as parameter */
   renderHeader?: (date?: XDate) => ReactNode; //TODO: replace with string
@@ -104,7 +104,7 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
     current = '',
     timelineLeftInset
   } = props;
-  
+
   const numberOfDaysCondition = useMemo(() => {
     return numberOfDays && numberOfDays > 1;
   }, [numberOfDays]);
@@ -125,7 +125,7 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
         : arrowsHitSlop,
     [arrowsHitSlop]
   );
-  
+
   useImperativeHandle(ref, () => ({
     onPressLeft,
     onPressRight
@@ -153,18 +153,21 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
     return addMonth();
   }, [onPressArrowRight, addMonth, month]);
 
-  const onAccessibilityAction = useCallback((event: AccessibilityActionEvent) => {
-    switch (event.nativeEvent.actionName) {
-      case 'decrement':
-        onPressLeft();
-        break;
-      case 'increment':
-        onPressRight();
-        break;
-      default:
-        break;
-    }
-  }, [onPressLeft, onPressRight]);
+  const onAccessibilityAction = useCallback(
+    (event: AccessibilityActionEvent) => {
+      switch (event.nativeEvent.actionName) {
+        case 'decrement':
+          onPressLeft();
+          break;
+        case 'increment':
+          onPressRight();
+          break;
+        default:
+          break;
+      }
+    },
+    [onPressLeft, onPressRight]
+  );
 
   const renderWeekDays = useMemo(() => {
     const dayOfTheWeek = new XDate(current).getDay();
@@ -203,31 +206,27 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
     }
 
     return (
-      <Fragment>
-        <Text
-          allowFontScaling={false}
-          style={style.current.monthText}
-          testID={`${testID}.title`}
-          {...webProps}
-        >
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Text allowFontScaling={false} style={style.current.monthText} testID={`${testID}.title`} {...webProps}>
           {formatNumbers(month?.toString(monthFormat))}
         </Text>
-      </Fragment>
+        <Image source={require('../img/next.png')} style={{marginLeft: 8, width: 6, height: 10.122}} />
+      </View>
     );
   };
 
   const _renderArrow = (direction: Direction) => {
     if (hideArrows) {
-      return <View/>;
+      return <View />;
     }
 
     const isLeft = direction === 'left';
     const arrowId = isLeft ? 'leftArrow' : 'rightArrow';
     const shouldDisable = isLeft ? disableArrowLeft : disableArrowRight;
-    const onPress = !shouldDisable ? isLeft ? onPressLeft : onPressRight : undefined;
+    const onPress = !shouldDisable ? (isLeft ? onPressLeft : onPressRight) : undefined;
     const imageSource = isLeft ? require('../img/previous.png') : require('../img/next.png');
-    const renderArrowDirection = isLeft ? 'left' : 'right';   
-      
+    const renderArrowDirection = isLeft ? 'left' : 'right';
+
     return (
       <TouchableOpacity
         onPress={onPress}
@@ -239,7 +238,10 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
         {renderArrow ? (
           renderArrow(renderArrowDirection)
         ) : (
-          <Image source={imageSource} style={shouldDisable ? style.current.disabledArrowImage : style.current.arrowImage}/>
+          <Image
+            source={imageSource}
+            style={shouldDisable ? style.current.disabledArrowImage : style.current.arrowImage}
+          />
         )}
       </TouchableOpacity>
     );
@@ -247,12 +249,7 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
 
   const renderIndicator = () => {
     if (displayLoadingIndicator) {
-      return (
-        <ActivityIndicator
-          color={theme?.indicatorColor as ColorValue}
-          testID={`${testID}.loader`}
-        />
-      );
+      return <ActivityIndicator color={theme?.indicatorColor as ColorValue} testID={`${testID}.loader`} />;
     }
   };
 
@@ -263,10 +260,7 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
   const renderDayNames = () => {
     if (!hideDayNames) {
       return (
-        <View
-          style={dayNamesStyle}
-          testID={`${testID}.dayNames`}
-        >
+        <View style={dayNamesStyle} testID={`${testID}.dayNames`}>
           {renderWeekNumbersSpace()}
           {renderWeekDays}
         </View>
@@ -286,12 +280,15 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
       importantForAccessibility={importantForAccessibility} // Android
     >
       <View style={headerStyle}>
-        {_renderArrow('left')}
         <View style={style.current.headerContainer}>
           {_renderHeader()}
           {renderIndicator()}
         </View>
-        {_renderArrow('right')}
+        <View style={{flexDirection: 'row'}}>
+          {_renderArrow('left')}
+          <View style={{width: 12}} />
+          {_renderArrow('right')}
+        </View>
       </View>
       {renderDayNames()}
     </View>
