@@ -34,7 +34,7 @@ export default function (theme: Theme = {}) {
     },
     arrowImage: {
       ...rtlStyle,
-      tintColor: appStyle.arrowColor,
+      tintColor: '#E86D93',
       ...Platform.select({
         web: {
           width: appStyle.arrowWidth,
