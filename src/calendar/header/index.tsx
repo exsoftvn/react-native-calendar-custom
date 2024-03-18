@@ -1,7 +1,7 @@
 import includes from 'lodash/includes';
 import XDate from 'xdate';
 
-import React, {ReactNode, useCallback, useMemo, forwardRef, useImperativeHandle, useRef} from 'react';
+import React, {ReactNode, useCallback, useMemo, forwardRef, useImperativeHandle, useRef, Fragment} from 'react';
 import {
   ActivityIndicator,
   Platform,
@@ -206,12 +206,11 @@ const CalendarHeader = forwardRef((props: CalendarHeaderProps, ref) => {
     }
 
     return (
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <Fragment>
         <Text allowFontScaling={false} style={style.current.monthText} testID={`${testID}.title`} {...webProps}>
           {formatNumbers(month?.toString(monthFormat))}
         </Text>
-        <Image source={require('../img/next.png')} style={{marginLeft: 8, width: 6, height: 10.122}} />
-      </View>
+      </Fragment>
     );
   };
 
